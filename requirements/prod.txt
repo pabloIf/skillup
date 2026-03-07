@@ -1,0 +1,2 @@
+-r base.txt
+# Only base packages for production
