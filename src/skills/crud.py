@@ -44,6 +44,16 @@ def create_skill(name: str, user_id: str):
 
     return {"id": skill_id, "user_id": user_id, "name": name}
 
+def update_skill(skill_id: int, update_data: dict):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        for key, value in update_data.items():
+            query = f"UPDATE skills SET {key} = ? WHERE id = ?"
+            cursor.execute(query, (value, skill_id))
+        conn.commit()
+    
+    return True
+
 def delete_skill(id):
     with get_connection() as conn:
         cursor = conn.cursor()

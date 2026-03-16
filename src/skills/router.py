@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from auth.dependencies import get_current_user
-from skills.schemas import Skills
+from .schemas import Skills, SkillsPatch
 from . import service
 
 
@@ -24,6 +24,10 @@ def get_skill_stats(skill_id: int, current_user: dict = Depends(get_current_user
 @skills_router.post("/skills")
 def add_skill(skill: Skills, current_user: dict = Depends(get_current_user)):
     return service.add_skill(skill, current_user)
+
+@skills_router.patch("/skills/{skill_id}")
+def patch_skill(skill_id: int, skill: SkillsPatch, current_user: dict = Depends(get_current_user)):
+    return service.patch_skill(skill_id, skill, current_user)
 
 @skills_router.delete("/skills/{skill_id}")
 def remove_skill(skill_id: int, current_user: dict = Depends(get_current_user)):

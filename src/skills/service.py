@@ -26,6 +26,14 @@ def get_skill_stats(skill_id: int, current_user: dict) -> dict:
 def add_skill(skill: schemas.Skills, current_user: dict) -> dict:
     return crud.create_skill(skill.name, current_user["id"])
 
+def patch_skill(skill_id: int, skill: schemas.SkillsPatch, current_user: dict):
+    db_skill = crud.get_skill_by_id(skill_id, current_user["id"])
+    if not db_skill:
+        raise HTTPException(status_code=404, detail="skill not found")
+    update_data = skill.dict(exclude_unset=True)
+    crud.update_skill(skill_id, update_data)
+    return {"detail": "SKill Updated"}
+
 def remove_skill(skill_id: int, current_user: dict) -> dict:
     skill = crud.get_skill_by_id(skill_id, current_user["id"])
     if not skill:
