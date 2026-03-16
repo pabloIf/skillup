@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from datetime import datetime
 
 from . import crud, schemas
-from logs.crud import get_logs_by_skill_id, delete_logs_by_skill_id
+from logs.crud import get_logs_by_skill_id
 from stats.service import calculate_streaks
 
 def get_skills(user_id) -> list[dict]:
@@ -30,6 +30,5 @@ def remove_skill(skill_id: int, current_user: dict) -> dict:
     skill = crud.get_skill_by_id(skill_id, current_user["id"])
     if not skill:
         raise HTTPException(status_code=404, detail="skill not found") 
-    delete_logs_by_skill_id(skill_id)
     crud.delete_skill(skill_id)
-    return { "detail": "Skill deleted" }
+    return {"detail": "Skill deleted"}

@@ -5,7 +5,7 @@ from skills.schemas import Skills
 from . import service
 
 
-skills_router = APIRouter()
+skills_router = APIRouter(tags=["Skills"])
 
 @skills_router.get("/skills")
 def get_skills(current_user: dict = Depends(get_current_user)):

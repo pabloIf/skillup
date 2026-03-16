@@ -45,14 +45,3 @@ def delete_log(log_id):
         conn.commit()
 
     return True
-
-def delete_logs_by_skill_id(skill_id: int):
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute(
-            "DELETE FROM logs WHERE skill_id = ?",
-            (skill_id,)
-        )
-        conn.commit()
-    
-    return True

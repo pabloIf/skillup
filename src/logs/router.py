@@ -4,7 +4,7 @@ from logs.schemas import Log
 from . import service
 
 
-logs_router = APIRouter()
+logs_router = APIRouter(tags=["Logs"])
 
 @logs_router.get("/logs/skill/{skill_id}")
 def get_logs_for_skill(skill_id: int, current_user: dict = Depends(get_current_user)):

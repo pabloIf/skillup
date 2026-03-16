@@ -12,11 +12,12 @@ def init_db():
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
+    cursor.execute("""CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            is_active BOOLEAN DEFAULT 1,
+            email TEXT UNIQUE NOT NULL
         )
     """)
 
@@ -25,7 +26,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             name TEXT NOT NULL,
-            FOREIGN KEY(user_id) REFERENCES users(id)
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
         )
     """)
 
@@ -34,7 +35,7 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             skill_id INTEGER NOT NULL,
             date TEXT NOT NULL,
-            FOREIGN KEY(skill_id) REFERENCES skills(id)
+            FOREIGN KEY(skill_id) REFERENCES skills(id) ON DELETE CASCADE
         )
     """)
 
