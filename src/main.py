@@ -8,6 +8,6 @@ app = FastAPI()
 
 init_db()
 
-app.include_router(skills_router)
-app.include_router(logs_router)
-app.include_router(auth_router)
+app.include_router(skills_router, prefix="/api")
+app.include_router(logs_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
