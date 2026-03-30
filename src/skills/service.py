@@ -23,8 +23,9 @@ def get_skill_stats(skill_id: int, current_user: dict) -> dict:
         return {"detail": "No logs for this skill"}
     return calculate_streaks([datetime.strptime(log["date"], "%Y-%m-%d").date() for log in logs])
 
-def add_skill(skill: schemas.Skills, current_user: dict) -> dict:
-    return crud.create_skill(skill.name, current_user["id"])
+def add_skill(skill: schemas.SkillsCreate, current_user: dict) -> schemas.SkillsResponce:
+    skill_data = crud.create_skill(skill.name, current_user["id"])
+    return schemas.SkillsResponce(**skill_data)
 
 def patch_skill(skill_id: int, skill: schemas.SkillsPatch, current_user: dict):
     db_skill = crud.get_skill_by_id(skill_id, current_user["id"])

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Skill Tracker</title>
+</head>
+<body>
+
+<h1>Skill Tracker</h1>
+
+<!-- LOGIN -->
+<h2>Login</h2>
+<input id="username" placeholder="username">
+<input id="password" placeholder="password" type="password">
+<button onclick="login()">Login</button>
+
+<hr>
+
+<!-- CREATE SKILL -->
+<h2>Create Skill</h2>
+<input id="skill-name" placeholder="Skill name">
+<button onclick="createSkill()">Create</button>
+
+<hr>
+
+<!-- SKILLS -->
+<h2>Skills</h2>
+<button onclick="viewSkills()">Refresh</button>
+<ul id="skills-list"></ul>
+
+<script>
+
+function getToken() {
+    return localStorage.getItem("token");
+}
+
+// LOGIN
+async function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    const response = await fetch('http://127.0.0.1:8000/api/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': "application/x-www-form-urlencoded"
+        },
+        body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
+    });
+
+    const data = await response.json();
+    localStorage.setItem("token", data.access_token);
+    alert("Logged in!");
+}
+
+// CREATE SKILL
+async function createSkill() {
+    const name = document.getElementById('skill-name').value;
+
+    const response = await fetch('http://127.0.0.1:8000/api/skills', {
+        method: 'POST',
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name })
+    });
+
+    const data = await response.json();
+    console.log(data);
+    viewSkills();
+}
+
+// VIEW SKILLS
+async function viewSkills() {
+    const response = await fetch('http://127.0.0.1:8000/api/skills', {
+        method: 'GET',
+        headers: {
+            "Authorization": `Bearer ${getToken()}`
+        }
+    });
+
+    const data = await response.json();
+
+    const list = document.getElementById('skills-list');
+    list.innerHTML = '';
+
+    data.forEach(skill => {
+        const li = document.createElement('li');
+
+        li.innerHTML = `
+            <b>${skill.name}</b> (id: ${skill.id})
+            <button onclick="addLog(${skill.id})">+</button>
+            <button onclick="getStats(${skill.id})">Stats</button>
+            <div id="stats-${skill.id}"></div>
+        `;
+
+        list.appendChild(li);
+    });
+}
+
+// ADD LOG
+async function addLog(skillId) {
+    const log_date = new Date().toISOString().split('T')[0];
+    const response = await fetch('http://127.0.0.1:8000/api/logs', {
+        method: 'POST',
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            skill_id: skillId,
+            date: log_date
+        })
+    });
+
+    if (response.ok) {
+        alert("Log added!");
+    } else {
+        const data = await response.json().catch(() => ({ error: 'Cannot parse response' }));
+        console.error("Error adding log:", data);
+        alert("Error adding log! Check console.");
+    }
+}
+
+// GET STATS
+async function getStats(skillId) {
+    const response = await fetch(`http://127.0.0.1:8000/api/skills/${skillId}/stats`, {
+        headers: {
+            "Authorization": `Bearer ${getToken()}`
+        }
+    });
+
+    const data = await response.json();
+
+    document.getElementById(`stats-${skillId}`).innerText =
+        `Current Streak: ${data.current_streak}, Longest Streak: ${data.max_streak}`;
+}
+
+</script>
+
+</body>
+</html>

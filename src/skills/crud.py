@@ -32,7 +32,7 @@ def get_skills_by_user_id(user_id: int):
 
     return [dict(row) for row in rows]
 
-def create_skill(name: str, user_id: str):
+def create_skill(name: str, user_id: int):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
@@ -42,7 +42,7 @@ def create_skill(name: str, user_id: str):
         conn.commit()
         skill_id = cursor.lastrowid
 
-    return {"id": skill_id, "user_id": user_id, "name": name}
+    return {"id": skill_id, "name": name}
 
 def update_skill(skill_id: int, update_data: dict):
     with get_connection() as conn:
