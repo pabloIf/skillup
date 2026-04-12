@@ -19,8 +19,7 @@ def get_skill_stats(skill_id: int, current_user: dict) -> dict:
     if not skill:
         raise HTTPException(status_code=404, detail="skill not found")
     logs = get_logs_by_skill_id(skill_id)
-    if not logs:
-        return {"detail": "No logs for this skill"}
+    
     return calculate_streaks([datetime.strptime(log["date"], "%Y-%m-%d").date() for log in logs])
 
 def add_skill(skill: schemas.SkillsCreate, current_user: dict) -> schemas.SkillsResponce:
@@ -39,5 +38,10 @@ def remove_skill(skill_id: int, current_user: dict) -> dict:
     skill = crud.get_skill_by_id(skill_id, current_user["id"])
     if not skill:
         raise HTTPException(status_code=404, detail="skill not found") 
-    crud.delete_skill(skill_id)
+    
+    try:
+        crud.delete_skill(skill_id)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
     return {"detail": "Skill deleted"}

@@ -9,9 +9,18 @@
 
 <!-- LOGIN -->
 <h2>Login</h2>
-<input id="username" placeholder="username">
-<input id="password" placeholder="password" type="password">
+<input id="login-username" placeholder="username">
+<input id="login-password" placeholder="password" type="password">
 <button onclick="login()">Login</button>
+
+<hr>
+
+<!-- REGISTER -->
+<h2>Register</h2>
+<input id="register-email" placeholder="email">
+<input id="register-username" placeholder="username">
+<input id="register-password" placeholder="password" type="password">
+<button type="button" onclick="register()">Register</button>
 
 <hr>
 
@@ -35,8 +44,8 @@ function getToken() {
 
 // LOGIN
 async function login() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
 
     const response = await fetch('http://127.0.0.1:8000/api/login', {
         method: 'POST',
@@ -51,6 +60,39 @@ async function login() {
     alert("Logged in!");
 }
 
+// REGISTER
+async function register() {
+    const username = document.getElementById('register-username').value.trim();
+    const password = document.getElementById('register-password').value.trim();
+    const email = document.getElementById('register-email').value.trim();
+
+    console.log("DEBUG:", { username, password, email });
+    if (!username || !password || !email) {
+        alert("All fields are required!");
+        return;
+    }
+
+    const response = await fetch('http://127.0.0.1:8000/api/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': "application/json"
+        },
+        body: JSON.stringify({ username, password, email })
+    });
+
+    console.log(data);
+    if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error:", errorData);
+        alert("Registration failed");
+        return;
+    }
+    else {
+        console.log("Registration successful:", data);
+        alert("Registration successful!");
+    }   
+}
+
 // CREATE SKILL
 async function createSkill() {
     const name = document.getElementById('skill-name').value;
@@ -62,6 +104,26 @@ async function createSkill() {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ name })
+    });
+
+    const data = await response.json();
+    console.log(data);
+    viewSkills();
+}
+
+// DELETE SKILL
+async function deleteSkill(skillId) {
+    const name = document.getElementById('skill-name').value;
+
+    const response = await fetch(`http://127.0.0.1:8000/api/skills/${skillId}`, {
+        method: 'DELETE',
+        headers: {
+            "Authorization": `Bearer ${getToken()}`,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            skill_id: skillId
+        })
     });
 
     const data = await response.json();
@@ -90,6 +152,7 @@ async function viewSkills() {
             <b>${skill.name}</b> (id: ${skill.id})
             <button onclick="addLog(${skill.id})">+</button>
             <button onclick="getStats(${skill.id})">Stats</button>
+            <button onclick="deleteSkill(${skill.id})">Delete</button>
             <div id="stats-${skill.id}"></div>
         `;
 

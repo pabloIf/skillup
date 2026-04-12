@@ -26,11 +26,11 @@ def get_all_users():
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT id, username FROM users"
+            "SELECT id, username, email FROM users"
         )
-        row = cursor.fetchall()
+        rows= cursor.fetchall()
     
-    return [dict(row) if row else None]
+    return [dict(row) for row in rows]
 
 def get_user_by_username(username: str):
     with get_connection() as conn:
