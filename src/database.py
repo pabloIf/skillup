@@ -34,8 +34,10 @@ def init_db():
         CREATE TABLE IF NOT EXISTS logs (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             skill_id INTEGER NOT NULL,
-            date TEXT NOT NULL,
-            FOREIGN KEY(skill_id) REFERENCES skills(id) ON DELETE CASCADE
+            log_date TEXT NOT NULL,
+            FOREIGN KEY(skill_id) REFERENCES skills(id) ON DELETE CASCADE,
+            
+            UNIQUE(skill_id, log_date)
         )
     """)
 

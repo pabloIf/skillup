@@ -5,7 +5,7 @@ def get_log_by_id(log_id: int):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT id, skill_id, date FROM logs WHERE id = ?",
+            "SELECT id, skill_id, log_date FROM logs WHERE id = ?",
             (log_id,)
         )
         row = cursor.fetchone()
@@ -16,7 +16,7 @@ def get_logs_by_skill_id(skill_id: int):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT id, skill_id, date FROM logs WHERE skill_id = ?",
+            "SELECT id, skill_id, log_date FROM logs WHERE skill_id = ?",
             (skill_id,)
         )
         rows = cursor.fetchall()
@@ -27,7 +27,7 @@ def create_log(skill_id: int, log_date: str) -> dict:
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO logs (skill_id, date) VALUES (?, ?)",
+            "INSERT INTO logs (skill_id, log_date) VALUES (?, ?)",
             (skill_id, log_date)
         )
         conn.commit()
