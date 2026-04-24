@@ -20,7 +20,7 @@ def get_skill_stats(skill_id: int, current_user: dict) -> dict:
         raise HTTPException(status_code=404, detail="skill not found")
     logs = get_logs_by_skill_id(skill_id)
     
-    return calculate_streaks([datetime.strptime(log["date"], "%Y-%m-%d").date() for log in logs])
+    return calculate_streaks([datetime.strptime(log["log_date"], "%Y-%m-%d").date() for log in logs])
 
 def add_skill(skill: schemas.SkillsCreate, current_user: dict) -> schemas.SkillsResponce:
     skill_data = crud.create_skill(skill.name, current_user["id"])
