@@ -87,16 +87,6 @@ export async function addLog(skillId, token) {
     return result;
 }
 
-export async function getStats(skillId, token) {
-    const res = await fetch(`${API}/skills/${skillId}/stats`, {
-        headers: {
-            "Authorization": `Bearer ${token}`
-        }
-    });
-
-    return await res.json();
-}
-
 export async function patchSkill(id, name, token) {
     const res = await fetch(`${API}/skills/${id}`, {
         method: "PATCH",

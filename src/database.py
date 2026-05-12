@@ -26,6 +26,11 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             name TEXT NOT NULL,
+            target INTEGER DEFAULT 100,
+            xp INTEGER DEFAULT 0,
+            current_streak INTEGER DEFAULT 0,
+            max_streak INTEGER DEFAULT 0,
+            last_log_date TEXT,
             FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
         )
     """)
