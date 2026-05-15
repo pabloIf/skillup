@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import Optional
 
 class Skills(BaseModel):
@@ -8,6 +8,12 @@ class Skills(BaseModel):
 class SkillsCreate(BaseModel):
     name: str
 
+    @field_validator("name")
+    def validate_name(cls, v):
+        if not v.strip():
+            raise ValueError("Name cannot be empty")
+        return v
+    
 class SkillsResponce(BaseModel):
     id: int
     name: str

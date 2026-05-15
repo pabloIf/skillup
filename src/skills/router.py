@@ -16,11 +16,6 @@ def get_skill(skill_id: int, current_user: dict = Depends(get_current_user)):
     skill = service.get_skill(skill_id, current_user)
     return skill
 
-@skills_router.get("/skills/{skill_id}/stats")
-def get_skill_stats(skill_id: int, current_user: dict = Depends(get_current_user)):
-    stats = service.get_skill_stats(skill_id, current_user)
-    return stats
-
 @skills_router.post("/skills", response_model=SkillsResponce)
 def add_skill(skill: SkillsCreate, current_user: dict = Depends(get_current_user)):
     return service.add_skill(skill, current_user)

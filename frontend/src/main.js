@@ -5,10 +5,10 @@ import {
     createSkill,
     deleteSkill,
     addLog,
-    getStats,
     patchSkill
 } from "./api.js";
 import "./style.css";
+import { confirmAction, showToast } from "./ui.js";
 
 function checkAuth() {
     const token = localStorage.getItem("token");
@@ -48,8 +48,10 @@ window.login = async function () {
     window.location.href = "/home.html";
 };
 
-window.logout = function () {
-    if (!confirm("Are you sure you want to logout?")) return;
+window.logout = async function () {
+    const ok = await confirmAction("Logout?");
+
+    if (!ok) return;
 
     localStorage.removeItem("token");
 
@@ -73,6 +75,7 @@ window.createSkill = async function () {
 
     await createSkill(name, localStorage.getItem("token"));
     await viewSkills();
+    showToast("Skill created successfully");
 };
 
 window.patchSkill = async function (id) {
@@ -80,10 +83,15 @@ window.patchSkill = async function (id) {
     
     await patchSkill(id, name, localStorage.getItem("token"));
     await viewSkills();
+    showToast("Name updated successfully");
 };
 
 window.deleteSkill = async function (id) {
-    if (!confirm("Are you sure you want to delete?")) return;
+    console.log("DELETE CLICKED", id);
+    const ok = await confirmAction("Delete skill?");
+    console.log("CONFIRM OPENED");
+    
+    if (!ok) return;
 
     await deleteSkill(id, localStorage.getItem("token"));
     await viewSkills();
@@ -93,17 +101,10 @@ window.addLog = async function (id) {
     try {
         await addLog(id, localStorage.getItem("token"));
         await viewSkills();
-        alert("Log added!");
+        showToast("Log added successfully");
     } catch (err) {
-        alert(err.message);
+        showToast("Failed to add log");
     }   
-};
-
-window.getStats = async function (id) {
-    const data = await getStats(id, localStorage.getItem("token"));
-
-    document.getElementById(`stats-${id}`).innerText =
-        `Current: ${data.current_streak} Max: ${data.max_streak}`;
 };
 
 window.viewSkills = async function () {
@@ -113,6 +114,8 @@ window.viewSkills = async function () {
     list.innerHTML = "";
 
     for (const skill of data) {
+        const progress = skill.xp / skill.target * 100;
+        
         const li = document.createElement("li");
 
         li.innerHTML = `
@@ -120,15 +123,20 @@ window.viewSkills = async function () {
             <button onclick="addLog(${skill.id})">+</button>
             <button onclick="patchSkill(${skill.id})">Save</button>
             <button onclick="deleteSkill(${skill.id})">Delete</button>
-            <div id="stats-${skill.id}"></div>
+
+            <div>
+                Current: ${skill.current_streak} <br>
+                Max: ${skill.max_streak}
+            </div>
+
+            <div style="width: 800px; background: #ddd;">
+                <div style="width: ${progress}%; background: #c59700; height: 10px;"></div>
+            </div>
+            <div>
+                Xp: ${skill.xp} / ${skill.target}
+            </div>
         `;
 
         list.appendChild(li);
-
-        const stats = await getStats(skill.id, localStorage.getItem("token"));
-        console.log(stats);
-
-        document.getElementById(`stats-${skill.id}`).innerText =
-            `Current: ${stats.current_streak} Max: ${stats.max_streak}`;
     }
 };

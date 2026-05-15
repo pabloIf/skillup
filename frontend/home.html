@@ -17,6 +17,17 @@
 <ul id="skills-list"></ul>
 
 <button onclick="logout()">Logout</button>
+
+<div id="toast" class="toast"></div>
+<div id="confirm-modal" class="modal hidden">
+  <div class="modal-content">
+    <p id="confirm-text"></p>
+
+    <button id="confirm-yes">Yes</button>
+    <button id="confirm-no">Cancel</button>
+  </div>
+</div>
+
 <script type="module" src="src/main.js">
     console.log("HOME LOADED");
 </script>

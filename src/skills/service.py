@@ -1,9 +1,7 @@
 from fastapi import HTTPException
-from datetime import datetime
 
 from . import crud, schemas
-from logs.crud import get_logs_by_skill_id
-from stats.service import calculate_streaks
+
 
 def get_skills(user_id) -> list[dict]:
     return crud.get_skills_by_user_id(user_id)
@@ -13,14 +11,6 @@ def get_skill(skill_id: int, current_user: dict) -> dict:
     if not skill:
         raise HTTPException(status_code=404, detail="skill not found")
     return skill
-
-def get_skill_stats(skill_id: int, current_user: dict) -> dict:
-    skill = crud.get_skill_by_id(skill_id, current_user["id"])
-    if not skill:
-        raise HTTPException(status_code=404, detail="skill not found")
-    logs = get_logs_by_skill_id(skill_id)
-    
-    return calculate_streaks([datetime.strptime(log["log_date"], "%Y-%m-%d").date() for log in logs])
 
 def add_skill(skill: schemas.SkillsCreate, current_user: dict) -> schemas.SkillsResponce:
     skill_data = crud.create_skill(skill.name, current_user["id"])
