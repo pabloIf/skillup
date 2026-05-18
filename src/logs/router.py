@@ -3,6 +3,9 @@ from auth.dependencies import get_current_user
 from logs.schemas import Log
 from . import service
 
+from database import get_connection
+from uow.unit_of_work import UnitOfWork
+
 
 logs_router = APIRouter(tags=["Logs"])
 
@@ -13,8 +16,9 @@ def get_logs_for_skill(skill_id: int, current_user: dict = Depends(get_current_u
 
 @logs_router.post("/logs")
 def create_log(log: Log, current_user: dict = Depends(get_current_user)):
-    obj_log = service.create_log(log, current_user)
-    return obj_log
+    with get_connection() as conn:
+        with UnitOfWork(conn) as uow:
+            return service.create_log(uow, log, current_user)
 
 @logs_router.delete("/logs")
 def remove_log(log_id: int, current_user: dict = Depends(get_current_user)):

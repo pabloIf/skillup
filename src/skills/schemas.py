@@ -19,4 +19,4 @@ class SkillsResponce(BaseModel):
     name: str
 
 class SkillsPatch(BaseModel):
-    name: Optional[str]
+    name: Optional[str] = None

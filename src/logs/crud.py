@@ -1,5 +1,15 @@
 from database import get_connection
 
+class LogRepository:
+    def __init__(self, cursor):
+        self.cursor = cursor
+
+    def create(self, skill_id: int, log_date: str):
+        self.cursor.execute(
+            "INSERT INTO logs (skill_id, log_date) VALUES (?, ?)",
+            (skill_id, log_date)
+        )
+
 
 def get_log_by_id(log_id: int):
     with get_connection() as conn:
@@ -34,6 +44,7 @@ def create_log(skill_id: int, log_date: str) -> dict:
         log_id = cursor.lastrowid
 
     return {"id": log_id, "skill_id": skill_id, "date": log_date}
+
     
 def delete_log(log_id):
     with get_connection() as conn:
