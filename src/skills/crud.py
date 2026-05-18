@@ -1,5 +1,38 @@
 from database import get_connection
 
+class SkillRepository:
+    def __init__(self, cursor):
+        self.cursor = cursor
+
+    def update(self, skill_id: int, update_data: dict):
+        self.cursor.execute(
+            """
+            UPDATE skills
+            SET current_streak = ?,
+                max_streak = ?,
+                last_log_date = ?,
+                xp = ?
+            WHERE id = ?
+            """,
+            (
+                update_data["current_streak"],
+                update_data["max_streak"],
+                update_data["last_log_date"],
+                update_data["xp"],
+                skill_id
+            )
+        )
+    
+    def get_by_id(self, skill_id: int, user_id: int):
+        self.cursor.execute(
+            "SELECT * FROM skills WHERE id = ? AND user_id = ?",
+            (skill_id, user_id)
+        )
+        row = self.cursor.fetchone()
+
+        return dict(row) if row else None
+
+
 def get_all_skills():
     with get_connection() as conn:
         cursor = conn.cursor()
@@ -45,11 +78,20 @@ def create_skill(name: str, user_id: int):
     return {"id": skill_id, "name": name}
 
 def update_skill(skill_id: int, update_data: dict):
+    if not update_data:
+        return False
+    
     with get_connection() as conn:
         cursor = conn.cursor()
-        for key, value in update_data.items():
-            query = f"UPDATE skills SET {key} = ? WHERE id = ?"
-            cursor.execute(query, (value, skill_id))
+
+        fields = ", ".join(f"{key} = ?" for key in update_data)
+
+        values = list(update_data.values())
+        values.append(skill_id)
+
+        query = f"UPDATE skills SET {fields} WHERE id = ?"
+
+        cursor.execute(query, (values))
         conn.commit()
     
     return True

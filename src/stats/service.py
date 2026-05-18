@@ -21,3 +21,6 @@ def calculate_streak(skill: Skills, today: date) -> dict:
     max_streak = max(max_streak, current_streak)
 
     return {"current_streak": current_streak, "max_streak": max_streak}
+
+def calculate_xp(skill_xp: int) -> int:
+    return skill_xp + 1
